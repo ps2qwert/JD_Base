@@ -1,14 +1,15 @@
-0 */1 * * * git -C /scripts/ pull |ts >> /scripts/logs/pull.log 2>&1
-2 */1 * * * crontab /scripts/docker/${CRONTAB_LIST_FILE}
-3 */1 * * * npm install --prefix /scripts |ts >> /scripts/logs/npm_install.log 2>&1
+50 */1 * * * git -C /scripts/ pull |ts >> /scripts/logs/pull.log 2>&1
+52 */1 * * * crontab /scripts/docker/${CRONTAB_LIST_FILE}
+53 */1 * * * npm install --prefix /scripts |ts >> /scripts/logs/npm_install.log 2>&1
 # 每3天的23:50分清理一次日志
 50 23 */3 * * rm -rf /scripts/logs/*.log
 
 
 ##############短期活动##############
-# 暂无
-
-
+# 京喜故事(2020.12.12活动过期)
+10 * * * * node /scripts/jd_jxstory.js |ts >> /scripts/logs/jd_jxstory.log 2>&1
+# 金榜年终奖(2020.12.12活动过期)
+10 7 * * * node /scripts/jd_split.js |ts >> /scripts/logs/jd_split.log 2>&1
 ##############长期活动##############
 
 # 签到
@@ -59,3 +60,9 @@
 20 * * * * node /scripts/jd_dreamFactory.js |ts >> /scripts/logs/jd_dreamFactory.log 2>&1
 # 东东小窝
 16 6 * * * node /scripts/jd_small_home.js |ts >> /scripts/logs/jd_small_home.log 2>&1
+# 东东工厂
+36 * * * * node /scripts/jd_jdfactory.js |ts >> /scripts/logs/jd_jdfactory.log 2>&1
+#十元街
+36 8 * * * node /scripts/jd_syj.js |ts >> /scripts/logs/jd_syj.log 2>&1
+#秒杀红包雨
+40 8 * * * node /scripts/jd_ms_redrain.js |ts >> /scripts/logs/jd_ms_redrain.log 2>&1
