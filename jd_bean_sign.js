@@ -1,7 +1,7 @@
 /*
 京豆签到,自用,可N个京东账号,IOS软件用户请使用 https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js
 Node.JS专用
-更新时间：2020-11-27
+更新时间：2021-1-7
 从 github @ruicky改写而来
 version v0.0.1
 create by ruicky
@@ -17,6 +17,7 @@ const download = require('download');
 let resultPath = "./result.txt";
 let JD_DailyBonusPath = "./JD_DailyBonus.js";
 let outPutUrl = './';
+let NodeSet = 'CookieSet.json';
 let cookiesArr = [], cookie = '';
 
 if ($.isNode()) {
@@ -27,7 +28,7 @@ if ($.isNode()) {
 }
 !(async() => {
   if (!cookiesArr[0]) {
-    $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
+    $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
   await requireConfig();
@@ -42,9 +43,9 @@ if ($.isNode()) {
       $.nickName = '';
       await TotalBean();
       console.log(`*****************开始京东账号${$.index} ${$.nickName || $.UserName}京豆签到*******************\n`);
-      console.log(`⚠️⚠️⚠️⚠️目前Bark APP推送通知消息对推送内容长度有限制，如使用此推送方式脚本会默认转换成简洁内容推送 ⚠️⚠️⚠️⚠️\n`)
+      console.log(`⚠️⚠️⚠️⚠️目前Bark APP推送通知消息对推送内容长度有限制，如推送通知中包含此推送方式脚本会默认转换成简洁内容推送 ⚠️⚠️⚠️⚠️\n`)
       await changeFile(content);
-      await  execSign();
+      await execSign();
     }
   }
 })()
@@ -53,17 +54,19 @@ if ($.isNode()) {
 async function execSign() {
   console.log(`\n开始执行脚本签到，请稍等`)
   try {
-    if (notify.SCKEY || notify.BARK_PUSH || notify.DD_BOT_TOKEN || (notify.TG_BOT_TOKEN && notify.TG_USER_ID) || notify.IGOT_PUSH_KEY) {
-      await exec(`${process.execPath} ${JD_DailyBonusPath} >> ${resultPath}`);
-      const notifyContent = await fs.readFileSync(resultPath, "utf8");
-      console.log(`👇👇👇👇👇👇👇👇👇👇👇LOG记录👇👇👇👇👇👇👇👇👇👇👇\n${notifyContent}\n👆👆👆👆👆👆👆👆👆LOG记录👆👆👆👆👆👆👆👆👆👆👆`);
-    } else {
-      // 如果没有提供通知推送，则打印日志
-      console.log('没有提供通知推送，则打印脚本执行日志')
-      await exec(`${process.execPath} ${JD_DailyBonusPath}`, { stdio: "inherit" });
-    }
+    // if (notify.SCKEY || notify.BARK_PUSH || notify.DD_BOT_TOKEN || (notify.TG_BOT_TOKEN && notify.TG_USER_ID) || notify.IGOT_PUSH_KEY || notify.QQ_SKEY) {
+    //   await exec(`${process.execPath} ${JD_DailyBonusPath} >> ${resultPath}`);
+    //   const notifyContent = await fs.readFileSync(resultPath, "utf8");
+    //   console.log(`👇👇👇👇👇👇👇👇👇👇👇LOG记录👇👇👇👇👇👇👇👇👇👇👇\n${notifyContent}\n👆👆👆👆👆👆👆👆👆LOG记录👆👆👆👆👆👆👆👆👆👆👆`);
+    // } else {
+    //   console.log('没有提供通知推送，则打印脚本执行日志')
+    //   await exec(`${process.execPath} ${JD_DailyBonusPath}`, { stdio: "inherit" });
+    // }
+    await exec(`${process.execPath} ${JD_DailyBonusPath} >> ${resultPath}`);
+    const notifyContent = await fs.readFileSync(resultPath, "utf8");
+    console.log(`👇👇👇👇👇👇👇👇👇👇👇LOG记录👇👇👇👇👇👇👇👇👇👇👇\n${notifyContent}\n👆👆👆👆👆👆👆👆👆LOG记录👆👆👆👆👆👆👆👆👆👆👆`);
     // await exec("node JD_DailyBonus.js", { stdio: "inherit" });
-    // console.log('执行完毕', new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toLocaleDateString())
+    // console.log('执行完毕', new Date(new Date().getTime() + 8 * 3600000).toLocaleDateString())
     //发送通知
     if ($.isNode()) {
       let notifyContent = "";
@@ -73,7 +76,7 @@ async function execSign() {
         const barkContentStart = notifyContent.indexOf('【签到概览】')
         const barkContentEnd = notifyContent.length;
         if (process.env.JD_BEAN_SIGN_STOP_NOTIFY === 'true') return
-        if (notify.BARK_PUSH) process.env.JD_BEAN_SIGN_NOTIFY_SIMPLE = 'true';
+        if (process.env.BARK_PUSH || notify.BARK_PUSH) process.env.JD_BEAN_SIGN_NOTIFY_SIMPLE = 'true';
         if (process.env.JD_BEAN_SIGN_NOTIFY_SIMPLE === 'true') {
           if (barkContentStart > -1 && barkContentEnd > -1) {
             BarkContent = notifyContent.substring(barkContentStart, barkContentEnd);
@@ -86,7 +89,7 @@ async function execSign() {
         }
       }
       //不管哪个时区,这里得到的都是北京时间的时间戳;
-      const UTC8 = new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*60*60*1000;
+      const UTC8 = new Date().getTime() + new Date().getTimezoneOffset()*60000 + 28800000;
       $.beanSignTime = timeFormat(UTC8);
       console.log(`脚本执行完毕时间：${$.beanSignTime}`)
       if (BarkContent) {
@@ -128,6 +131,7 @@ async function downFile () {
 async function changeFile (content) {
   console.log(`开始替换变量`)
   let newContent = content.replace(/var Key = ''/, `var Key = '${cookie}'`);
+  newContent = newContent.replace(/const NodeSet = 'CookieSet.json'/, `const NodeSet = '${NodeSet}'`)
   if (process.env.JD_BEAN_STOP && process.env.JD_BEAN_STOP !== '0') {
     newContent = newContent.replace(/var stop = 0/, `var stop = ${process.env.JD_BEAN_STOP * 1}`);
   }
@@ -217,6 +221,7 @@ function requireConfig() {
       resultPath = err ? '/tmp/result.txt' : resultPath;
       JD_DailyBonusPath = err ? '/tmp/JD_DailyBonus.js' : JD_DailyBonusPath;
       outPutUrl = err ? '/tmp/' : outPutUrl;
+      NodeSet = err ? '/tmp/CookieSet.json' : NodeSet;
       resolve()
     });
   })
