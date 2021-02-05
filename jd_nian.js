@@ -339,7 +339,7 @@ function collectScore(taskId,itemId,actionType,inviteId) {
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data);
-            if (data.data.bizCode === 0) {
+            if (data.data.bizCode && data.data.bizCode === 0) {
               if(data.data.result.score)
                 console.log(`任务完成，获得${data.data.result.score}爆竹`)
               else if(data.data.result.maxAssistTimes) {
@@ -468,7 +468,7 @@ function getFriendData(inviteId) {
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           data = JSON.parse(data);
-          if (data && data.data['bizCode'] === 0) {
+          if (data && data.data && data.data['bizCode'] && data.data['bizCode'] === 0) {
             $.itemId = data.data.result.homeMainInfo.guestInfo.itemId
             await collectScore('2',$.itemId,null,inviteId)
           }
