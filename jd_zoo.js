@@ -2,7 +2,7 @@
  * @Author: PengKang
  * @Date: 2021-05-25 10:05:47
  * @LastEditors: PengKang
- * @LastEditTime: 2021-05-25 10:05:48
+ * @LastEditTime: 2021-05-25 11:00:27
  * @FilePath: \scripts\jd_zoo.js
  */
 /*
@@ -574,7 +574,7 @@ function zoo_pk_assistGroup(inviteId = "",timeout = 0) {
     let key = minusByByte(nonstr.slice(0,5),String(time).slice(-5))
     let msg = `random=${rnd}&token=d89985df35e6a2227fd2e85fe78116d2&time=${time}&nonce_str=${nonstr}&key=${key}&is_trust=true`
     let sign = bytesToHex(wordsToBytes(getSign(msg))).toUpperCase()
-    //inviteId = "IgNWdiLGaPbb6ArIDg2g7t5ov9boGePFOlAq0hiVz-muX7bnH9gutA"
+    //inviteId = "sSKNX-MpqKPS7LOxnJPdBUZsDesghuaoMUiCm6g7G9tZweuENQxXTbw"
     setTimeout( ()=>{
       let url = {
         url : `${JD_API_HOST}zoo_pk_assistGroup`  ,
@@ -650,10 +650,10 @@ function zoo_getHomeData(inviteId= "",timeout = 0) {
             //console.log('zoo_getHomeData:' + JSON.stringify(data))
             secretp = data.data.result.homeMainInfo.secretp
             await zoo_collectProduceScore();
-            await zoo_pk_getHomeData('sSKNX-MpqKOJsNu_mZneBluwe_DRzs1f90l6Q_p8OVxtoB-JJEErrVU4eHW7e2I')
+            await zoo_pk_getHomeData('sSKNX-MpqKPS7LOxnJPdBUZsDesghuaoMUiCm6g7G9tZweuENQxXTbw')
             //await zoo_pk_assistGroup()
             if (data.data.result.homeMainInfo.raiseInfo.buttonStatus === 1 ) await zoo_raise(1000)
-            await zoo_getHomeData('ZXTKT0225KkcRx4b8lbWJU72wvZZcwFjRWn6-7zx55awQ');
+            await zoo_getHomeData('ZXTKT018v_V0SRsR8VXRIxub1AFjRWn6-7zx55awQ');
             //await zoo_getTaskDetail("","app")
             await zoo_getTaskDetail()
           } else {
